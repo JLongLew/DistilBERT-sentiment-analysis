@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg bg-dark">
+    <div class="container-fluid ms-5 me-5 mb-2 mt-2">
+        <!-- Homepage Navigation -->
+        <a class="navbar-brand text-light" href="/">MyWebsite</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-ibcon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            {% if not session.usrID %}
+            <!-- Login Button -->
+            <a class="btn btn-primary px-3 me-2" href="{{url_for('login')}}" role="button">Login</a>
+            <!-- Customer Register Button -->
+            <a class="btn btn-secondary px-3 me-2" href="{{url_for('customer_register')}}" role="button">Register for Customer</a>
+            <!-- Business Register Button -->
+            <a class="btn btn-secondary px-3 me-2" href="{{url_for('business_register')}}" role="button">Register for Business</a>
+            {% else %}
+            <!-- Navigation Bar -->
+                {% if session.role == "business" %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 space-x-2">
+                    <li class="nav-item">
+                        <a class="nav-link text-light active" href="/">Homepage</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light active" href="{{url_for('add_product')}}">Add Product</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light active" href="{{url_for('product_analysis')}}">Product Analysis</a>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 space-x-2">
+                    <li class="nav-item">
+                        <a class="nav-link text-light active" href="/">Homepage</a>
+                    </li>
+                </ul>
+                {% endif %}
+                <!-- Search -->
+                <form class="d-flex" role="search" action="{{url_for('search_product')}}">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="x">
+                    <button class="btn btn-outline-success me-2" type="submit">Search</button>
+                </form>
+
+                <!-- Logout Button -->
+                <div class="d-flex align-items-center">
+                    <a class="btn btn-info px-3 me-2" href="{{url_for('logout')}}" role="button">Logout</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>

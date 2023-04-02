@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+
+{% if session.usrID %}
+{% if session.role == "customer" %}
+<div class="container-fluid bg-light text-center">
+    <div class="row py-lg-3">
+        <!-- Product Image -->
+        <div class="col-5 text-end ">
+            <img src="{{ products[1] }}" alt="{{ products[0] }}" width="150" height="100">
+        </div>
+        <!-- Product Name -->
+        <div class="col-7 text-start m-auto">
+            <h1>{{ products[0] }}</h1>
+        </div>
+    </div>
+</div><br>
+
+<div class="container rounded m-auto" style="padding-bottom:25px;">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-6">
+            <div class="shadow col-md-12 p-5 rounded bg-light">
+                <h4><strong>Tell us about your recent experience</strong></h4>
+                <hr class="my-3">
+                <form method="POST">
+                    <!-- Review Title -->
+                    {{ render_field(form.title, class="form-control")}}
+                    <!-- Review Content -->
+                    {{ render_field(form.feedback, class="form-control", rows='5', placeholder="What made your experience great? How is this product help you?")}}
+                    <!-- Experience Date -->
+                    {{ render_field(form.date, class="form-control")}}<br>
+                    <!-- Select Tags -->
+                    <h4><strong>Select a Tag for Other People Reference</strong></h4>
+                    <hr class="my-3">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ render_field(form.tag_1, class="form-select")}}
+                        </div>  
+                        <div class="col-md-4">
+                            {{ render_field(form.tag_2, class="form-select")}}
+                        </div>
+                        <div class="col-md-4">
+                            {{ render_field(form.tag_3, class="form-select")}}
+                        </div>
+                    </div>
+                    <p class="text-danger"><strong>Note:</strong> Please select at least 1 tag and don't select the same tag.</p>
+                    <hr class="my-4">
+                    <div class="form-check">
+                        <!-- Declaration Checkbox -->
+                        <input type="checkbox" class="form-check-input" id="declaration" onchange="document.getElementById('grabaperaus').disabled=!this.checked;">
+                        <label for="declaration" class="form-check-label font-monospace">I confirm this feedback is about my genuine experience. 
+                            I am eligible to leave this review, and have not been offered any incentive or payment to leave a review for this business.</label>
+                    </div>
+                    <hr class="my-4">
+                    <!-- Submit button -->
+                    <div class="d-grid gap-2 text-center">
+                        <input type="submit" value="Add Feedback" class="btn btn-primary " id="grabaperaus" disabled>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center h1 text-danger">You are not a customer. Cannot add review.</div>
+{% endif %}
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,108 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% if session.usrID %}
+{% if session.role == "business" %}
+<div class="container" style="padding-bottom:25px;">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10 ">
+            <br><div class="text-center bg-info p-2 h4">Update product</div>
+            {% from "_formhelpers.html" import render_field %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="row">
+                    {{ render_field(form.name, class="form-control") }}
+                    {{ render_field(form.description, class="form-control", rows="10") }}
+                    <div class="col">
+                        <b>Product Review Tags:</b><br>
+                        <!-- All Review Label -->
+                        {% for choice in all_labels %}
+                        <!-- Compulsory Review Label -->
+                        {% if choice in compulsory_labels %}
+                        <input type="checkbox" value="{{choice}}" checked disabled> {{choice}}<br>
+                        <!-- Selectable Review Label -->
+                        {% elif choice in selected_labels %}
+                        <input type="checkbox" name="selected_labels[]" value="{{choice}}" checked> {{choice}} <br>
+                        {% else %}
+                        <input type="checkbox" name="selected_labels[]" value="{{choice}}"> {{choice}} <br>
+                        {% endif %}
+                        {% endfor %}
+                        <br>
+                    </div>
+
+                    <div class="col">
+                        <!-- Add new tag -->
+                        <label for="textInput">Add new tag:</label><br>
+                        <input type="text" id="textInput" name="textInput">
+                        <input type="button" value="Add" class="btn btn-secondary" onclick="addTag()">
+                        <br>
+                        <div id="newTagDiv"></div>
+                    </div>
+
+                </div>
+                <!-- Previous Uploaded Photo -->
+                <b>Previous Uploaded Photo</b><br>
+                {% for image in img_url_list %}
+                <img src="{{ image }}" class="img-thumbnail" alt="{{ image }}" style="width:355px; height:264px; object-fit:contain;">
+                {% endfor %}
+
+                <!-- Product Photo -->
+                <div class="row">
+                    <label for="photo" style="font-weight:bold">Product Photos
+                        <input id="photo" type="file" name="files[]" class="form-control" multiple="true"
+                            autocomplete="off" required>
+                    </label>
+                    <p></p>
+                </div>
+                <!-- Submit Button -->
+                <input type="submit" value="Update Product" class="btn btn-success">
+            </form>
+        </div>
+        <div class="col-md-1 "></div>
+    </div>
+</div>
+{% endif %}
+{% else %}
+<div class="text-center h1 text-danger">You are not a business. Cannot edit product.</div>
+{% endif %}
+
+<script>
+    function addTag() {
+        var newTagDiv = document.getElementById("newTagDiv");
+        var newTag = document.getElementById("textInput").value;
+        if (newTag != "") {
+            // Create checkbox element
+            var checkbox = document.createElement('input');
+
+            // Assign the attributes to created checkbox
+            checkbox.type = "checkbox";
+            checkbox.name = "selected_labels[]";
+            checkbox.value = newTag;
+            checkbox.id = "tag";
+
+            // Create label element for the checkbox
+            var label = document.createElement('label');
+
+            // Assign attributes 'for' the created label
+            label.htmlFor = "tag";
+
+            // Append the new tag to the created label
+            label.appendChild(document.createTextNode(newTag));
+
+            // Append the checkbox and label to div
+            newTagDiv.appendChild(checkbox);
+            newTagDiv.appendChild(label);
+
+            // Append a new line to div
+            const node = document.createElement("br");
+            newTagDiv.appendChild(node);
+
+            // Clear the text input value
+            document.getElementById("textInput").value = ''
+        }
+    }
+</script>
+
+{% endblock content %}

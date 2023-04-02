@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+
+<div class="col-md-12 text-center">
+    <br>
+    <h1>Customer Registration</h1>
+</div>
+<br />
+
+<div class="container rounded" style="padding-bottom:25px;">
+    <div class="shadow col-md-12 p-5 rounded bg-light">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <!-- Info Input -->
+            {{ render_field(form.username, class="form-control", placeholder="Enter Your Desired Username")}}
+            {{ render_field(form.firstName, class="form-control", placeholder="Enter Your First Name")}}
+            {{ render_field(form.lastName, class="form-control", placeholder="Enter Your Last Name")}}
+            {{ render_field(form.gender, class="form-control")}}
+            {{ render_field(form.dob, class="form-control datepicker")}}
+            {{ render_field(form.email,class="form-control", placeholder="Enter Your Email")}}
+            {{ render_field(form.password,class="form-control", placeholder="Enter Your Password")}}
+            {{ render_field(form.password2,class="form-control", placeholder="Confirm Your Password")}}
+            {{ render_field(form.contact,class="form-control", placeholder="Enter Your Contact Number (Only numbers are accepted)")}}
+            {{ render_field(form.address,class="form-control", placeholder="Enter Your Address")}}
+            {{ render_field(form.city,class="form-control", placeholder="Enter Your City")}}
+            {{ render_field(form.country,class="form-control", placeholder="Enter Your Country")}}   
+
+            <br />
+            <!-- Submit button -->
+            <div class="col-md-12 text-center">
+                {{ form.submit(class="btn btn-outline-info ") }}
+                <p class="text-center"> Already have an account? <a href="{{url_for('login')}}">Sign in here</a></p>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<br>
+<div class="container" style="padding-bottom:25px;">
+    <div class="row row-cols-1 row-cols-md-3 g-5">
+        {% for details in products %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header">
+                    <!-- Product Name -->
+                    <h5 class="card-title text-center">{{ details[1] }}</h5>
+                </div>
+
+                <div class="card-body">
+                    <!-- Product Photo -->
+                    <img src="{{ details[4] }}" class="card-img-top" alt="{{ details[1] }}">
+
+                    <!-- Product Description -->
+                    <p class="card-text text-center">{{ details[2] }}</p>
+                </div>
+                
+                <div class="card-footer text-center">
+                    
+                    <form action="{{url_for('product', name=details[1])}}" >
+                        <div class="d-grid gap-2">
+                            <!-- Details Button -->
+                            <button type="submit" class="btn btn-primary">Details</button>
+                            {% if session.role == 'customer' %}
+                            <!-- Add Review Button -->
+                            <a href="{{url_for('add_review', name=details[1])}}" class="btn btn-warning">Add Review</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

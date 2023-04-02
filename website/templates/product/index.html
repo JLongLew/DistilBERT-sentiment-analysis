@@ -1,0 +1,213 @@
+{% extends 'layout.html' %}
+{% block content %}
+<br>
+<div class="container bg-light">
+    <div class="row py-lg-3">
+        <!-- Product Image -->
+        <div class="col-md-8">
+            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+                <div class="carousel-inner">
+                    {% for img in product[3] %}
+                    <div class="carousel-item text-center {% if loop.index == 1 %}active{% endif %}">
+                        <img src="{{ img }}" alt="{{ product[0] }}" width="auto" height="600">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(100%);"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(100%);"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-4 text-start m-auto">
+            <!-- Product Name -->
+            <h1 style="font-family: 'Oswald', sans-serif;">{{ product[0] }}</h1>
+            <!-- Business Name -->
+            <div class="text-muted fs-6">Business: {{ product[2] }}</div>
+            <hr class="my-4">
+            <!-- Product Description -->
+            <h6><strong>Product Description</strong></h6>
+            <p style="font-family: 'Hanken Grotesk', sans-serif;">{{ product[1] }}</p>
+            <hr class="my-4">
+            <!-- Customer Review Sentiment -->
+            <h6 style="margin-bottom: 0;"><strong>Sentiment Proportion: </strong>
+                <span class="badge bg-success"><strong>Positive</strong></span>
+                <span class="badge bg-warning"><strong>Neutral</strong></span>
+                <span class="badge bg-danger"><strong>Negative</strong></span>
+            </h6>
+            <!-- Selected Review Tag with the Number of Reviews-->
+            {% if product[7] %}
+            <p class="text-muted" style="margin-bottom:1em; font-size:15px;">
+                ( {{product[7]}}: 
+                {% if product[7] == "All Tags" %}
+                    {{product[4]}}
+                {% endif %}
+                {% for tag, number in product[5].items() %}
+                    {% if product[7] == tag %}
+                        {{number}}
+                    {% endif %}
+                {% endfor %}
+                reviews )
+            </p>
+            {% else %}
+            <p></p>
+            {% endif %}
+            <!-- Sentiment Proportion Bar -->
+            {% if product[6] %}
+                <div class="progress" style="height: 30px;">
+                    <div class="progress-bar bg-success progress-bar-striped" role="progressbar" aria-label="Segment one"
+                        data-custom-width="{{product[6][0]}}%" id="element1" aria-valuenow="{{product[6][0]}}" aria-valuemin="0"
+                        aria-valuemax="100">
+                        {{product[6][0]}}%
+                    </div>
+                    <div class="progress-bar bg-warning progress-bar-striped" role="progressbar" aria-label="Segment two"
+                        data-custom-width="{{product[6][1]}}%" id="element2" aria-valuenow="{{product[6][1]}}" aria-valuemin="0"
+                        aria-valuemax="100">
+                        {{product[6][1]}}%
+                    </div>
+                    <div class="progress-bar bg-danger progress-bar-striped" role="progressbar" aria-label="Segment three"
+                        data-custom-width="{{product[6][2]}}%" id="element3" aria-valuenow="{{product[6][2]}}" aria-valuemin="0"
+                        aria-valuemax="100">
+                        {{product[6][2]}}%
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center text-bg-secondary" >No Sentiment Yet</p>
+            {% endif %}
+            <hr class="my-4">
+            <!-- Add Review Button -->
+            {% if session.role == 'customer' %}
+            <div class="d-grid gap-2 text-center">
+                <a href="{{url_for('add_review', name=product[0])}}" class="btn btn-primary"><b>Add Review</b></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div><br>
+
+
+{% if reviews_list %}
+<!-- Button for selecting review tags -->
+<div class="container rounded m-auto" style="padding-bottom:25px;">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-8">
+            <form action="/product/{{product[0]}}" method="POST">
+                <button type="submit" class="btn btn-primary" style="margin:5px;" value="All Tags" name="button_value">
+                    All
+                    <span class="badge text-bg-secondary">{{product[4]}}</span>
+                </button>
+                {% for tag, number in product[5].items() %}
+                <!-- Display only tag buttons with available reviews -->
+                {% if number >0 %}
+                <button type="submit" class="btn btn-primary" style="margin:5px;" value="{{tag}}" name="button_value">
+                    {{tag}}
+                    <span class="badge text-bg-secondary">{{number}}</span>
+                </button>
+                {% endif %}
+                {% endfor %}
+            </form>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+<!-- Customer Reviews -->
+{% for reviews in reviews_list %}
+<div class="container rounded m-auto" style="padding-bottom:25px;">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-8">
+            <div class="shadow col-md-12 p-5 rounded bg-light">
+                <div class="row">
+                    <div class="col">
+                        <!-- Customer Name -->
+                        <h3><strong>{{reviews[0]}}</strong></h3>
+                    </div>
+                </div>
+                <div class="row" style="height: 25px;">
+                    <!-- Review Date -->
+                    <div class="col">
+                        <span class="text-muted fw-light" style="font-size: 16px;">{{reviews[6]}}</span>
+                    </div>
+                    <div class="col text-end ">
+                        <!-- Product Tags -->
+                        {% for tags in reviews[4] %}
+                        <p class="badge text-bg-info">{{tags}}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <hr class="my-2">
+                <!-- Review Title -->
+                <h3><strong>{{reviews[1]}}</strong></h3>
+                <!-- Sentiment -->
+                <p>
+                    {% if reviews[5]=='Neutral' %}
+                    <span class="badge text-bg-warning">
+                        <strong>{{reviews[5]}}</strong>
+                    </span>
+                    {% else %}
+                        {% if reviews[5]=="Positive" %}
+                        <span class="badge bg-success">
+                            <strong>{{reviews[5]}}</strong>
+                        </span>
+                        {% else %}
+                        <span class="badge {% if reviews[5]=='Negative' %}bg-danger{% else %}text-bg-secondary{% endif %} ">
+                            <strong>{{reviews[5]}}</strong>
+                        </span>
+                        {% endif %}
+                    {% endif %}
+                    <!-- Review Content -->
+                    {{reviews[2]}}
+                </p>
+                <!-- Experience Date -->
+                <p><strong>Date of experience: </strong> {{reviews[3]}} </p>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<!-- Label for no more reviews -->
+<div class="container rounded m-auto" style="padding-bottom:25px;">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-4 text-center">
+            <div class="shadow p-2 rounded-pill text-primary" style="background-color:#AED6F1;">
+                <b>No More Review</b>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+
+<script>
+    // Customize the progress bar width with sentiment proportion
+    var element1 = document.getElementById('element1');
+    var element2 = document.getElementById('element2');
+    var element3 = document.getElementById('element3');
+    var customValue1 = element1.getAttribute('data-custom-width');
+    var customValue2 = element2.getAttribute('data-custom-width');
+    var customValue3 = element3.getAttribute('data-custom-width');
+    element1.style.width = customValue1;
+    element2.style.width = customValue2;
+    element3.style.width = customValue3;
+</script>
+{% endblock content %}

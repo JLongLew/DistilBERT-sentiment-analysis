@@ -1,0 +1,195 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% if session.usrID %}
+{% if session.role == "business" %}
+<br>
+<!-- Total Number of Reviews -->
+<div class="container rounded m-auto" style="padding-bottom:25px;">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-8">
+            <div class="shadow col-md-12 p-5 rounded bg-light">
+                <!-- Label -->
+                <h4><strong>Total Number of Customer Reviews</strong></h4><br>
+                <div class="row">
+                    <!-- Today -->
+                    <div class="col border-end">
+                        <h6 class="text-muted">Today Volume</h6>
+                        <h1><strong>{{review_numbers[3]}}</strong></h1>
+                    </div>
+                    <!-- This Month -->
+                    <div class="col border-end">
+                        <h6 class="text-muted">This Month Volume</h6>
+                        <h1><strong>{{review_numbers[2]}}</strong></h1>
+                    </div>
+                    <!-- This Year -->
+                    <div class="col border-end">
+                        <h6 class="text-muted">This Year Volume</h6>
+                        <h1><strong>{{review_numbers[1]}}</strong></h1>
+                    </div>
+                    <!-- Total -->
+                    <div class="col">
+                        <h6 class="text-muted">Total Volume</h6>
+                        <h1><strong>{{review_numbers[0]}}</strong></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+
+{% if all_tag_sentiment %}
+<!-- Sentiment Breakdown by Products -->
+<div class="container rounded m-auto" style="padding-bottom:25px;">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-8">
+            <div class="shadow col-md-12 p-5 rounded bg-light">
+                <!-- Label -->
+                <h4><strong>Sentiment Breakdown by Products</strong></h4>
+                <!-- Graph -->
+                <canvas id="productSentiment"></canvas>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+
+<!-- Sentiment Breakdown by Review Tags -->
+<div class="container rounded m-auto" style="padding-bottom:25px;">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-8">
+            <div class="shadow col-md-12 p-5 rounded bg-light">
+                <!-- Label -->
+                <h4><strong>Sentiment Breakdown by Review Tags</strong></h4>
+                <!-- Graph -->
+                <canvas id="tagSentiment"></canvas>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="text-center h1 text-danger">You are not a business. No analysis.</div>
+{% endif %}
+{% endif %}
+
+<!-- Sentiment Proportional Bar -->
+<script>
+    const all_tag_sentiment = JSON.parse('{{ all_tag_sentiment | tojson }}');
+    const all_product_sentiment = JSON.parse('{{ all_product_sentiment | tojson }}');
+    const product_data = {
+        labels: all_product_sentiment[0],
+        datasets: [{
+            label: 'Positive',
+            data: all_product_sentiment[1],
+            backgroundColor: '#58E700'
+        },
+        {
+            label: 'Neutral',
+            data: all_product_sentiment[2],
+            backgroundColor: 'yellow'
+        },
+        {
+            label: 'Negative',
+            data: all_product_sentiment[3],
+            backgroundColor: 'red',
+            datalabels: {
+                anchor: 'center',
+                align: 'center'
+            }
+        },
+        ]
+    };
+
+    const tag_data = {
+        labels: all_tag_sentiment[0],
+        datasets: [{
+            label: 'Positive',
+            data: all_tag_sentiment[1],
+            backgroundColor: '#58E700'
+        },
+        {
+            label: 'Neutral',
+            data: all_tag_sentiment[2],
+            backgroundColor: 'yellow'
+        },
+        {
+            label: 'Negative',
+            data: all_tag_sentiment[3],
+            backgroundColor: 'red',
+            datalabels: {
+                anchor: 'center',
+                align: 'center'
+            }
+        },
+        ]
+    };
+
+    const options = {
+        indexAxis: 'y',
+        elements: {
+            bar: {
+                borderWidth: 2
+            }
+        },
+        responsive: true,
+        scales: {
+            x: {
+                stacked: true
+            },
+            y: {
+                stacked: true
+            }
+        },
+        plugins: {
+            datalabels: {
+                anchor: 'center',
+                align: 'center',
+                color: 'black',
+                font: {
+                    weight: 'bold'
+                },
+                formatter: function (value, index, values) {
+                    if (value > 0) {
+                        value = value.toString();
+                        value = value.split(/(?=(?:...)*$)/);
+                        value = value.join(',');
+                        return value;
+                    } else {
+                        value = "";
+                        return value;
+                    }
+                }
+            },
+            legend: {
+                position: 'right'
+            },
+        }
+    };
+
+    Chart.register(ChartDataLabels);
+    const myChart1 = new Chart(document.getElementById('productSentiment'), {
+        type: 'bar',
+        data: product_data,
+        options: options,
+    });
+    
+    const myChart2 = new Chart(document.getElementById('tagSentiment'), {
+        type: 'bar',
+        data: tag_data,
+        options: options,
+    });
+</script>
+{% endblock content %}

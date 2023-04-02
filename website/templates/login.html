@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+
+
+<div class="col-md-12 text-center">
+    <br>
+    <h1>Login</h1>
+</div>
+<br />
+
+<div class="container rounded" style="padding-bottom:25px;">
+    <div class="shadow col-md-12 p-5 rounded bg-light">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <!-- Info Input -->
+            {{ render_field(form.email, class="form-control", placeholder="Enter Your Email")}}
+            {{ render_field(form.password,class="form-control", placeholder="Enter Your Password")}}
+            {{ render_field(form.role, class="form-control")}}
+            <br />
+
+            <br />
+            <!-- Submit button -->
+            <div class="col-md-12 text-center">
+                {{ form.submit(class="btn btn-outline-info ") }}
+                <p class="text-center"> Don't have account? </p>
+                <a href="{{url_for('business_register')}}">Sign up here for business</a> <br>
+                <a href="{{url_for('customer_register')}}">Sign up here for customer</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock content %}

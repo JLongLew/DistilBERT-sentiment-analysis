@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% if session.usrID %}
+<div class="text-center h1 text-danger">Hi {{session.email}}</div>
+{% else %}
+<div class="text-center h1 text-danger">Please Login!</div>
+{% endif %}
+
+
+{% endblock content %}
